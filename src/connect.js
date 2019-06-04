@@ -6,7 +6,7 @@ import {assign} from './utils/Object.js'
 const defaultMapStateToProps = state => ({}) // eslint-disable-line no-unused-vars
 const defaultMapDispatchToProps = dispatch => ({dispatch})
 
-function connect(mapStateToProps, mapDispatchToProps) {
+function connect(mapStateToProps, mapDispatchToProps, store) {
   const shouldSubscribe = Boolean(mapStateToProps)
   const mapState = mapStateToProps || defaultMapStateToProps
   const app = getApp();
@@ -43,7 +43,7 @@ function connect(mapStateToProps, mapDispatchToProps) {
     } = pageConfig
 
     function onLoad(options) {
-      this.store = app.store;
+      this.store = store || app.store;
       if (!this.store) {
         warning("Store对象不存在!")
       }
@@ -75,7 +75,7 @@ function connect(mapStateToProps, mapDispatchToProps) {
     const ready = onLoad
     const detached = onUnload
 
-    return assign({}, pageConfig, mapDispatch(app.store.dispatch), {onLoad, onUnload, ready, detached})
+    return assign({}, pageConfig, mapDispatch((store && store.dispatch) || app.store.dispatch), {onLoad, onUnload, ready, detached})
   }
 }
 
